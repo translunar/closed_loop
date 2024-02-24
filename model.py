@@ -23,12 +23,19 @@ class Model:
     def ready_at(self, t):
         return t - self.t >= self.dt
 
-    def add_input(self, local_name, world_key, attribute):
-        self.inputs[local_name] = (world_key, attribute)
+    def add_input(self, local_name, model_id_attribute, index=None):
+        model_id, attribute = model_id_attribute.split('.')
+        if local_name in self.inputs:
+            raise ValueError(f"input {local_name} already exists")
+        self.inputs[local_name] = (model_id, attribute, index)
 
     def get_input(self, local_name):
-        world_key, attribute = self.inputs[local_name]
-        return getattr(self.world.models[world_key], attribute)
+        model_id, attribute, index = self.inputs[local_name]
+        value = getattr(self.world.models[model_id], attribute)
+        if index is None:
+            return value
+        else:
+            return value[index]
 
     def update(self, t):
         """
