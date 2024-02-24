@@ -1,8 +1,10 @@
 import h5py
 import numpy.random as npr
 
-from dynamic_model import DynamicModel, MassSpringDamper
-from discrete_model import PIDController, GaussianNoise
+from dynamic_model import DynamicModel
+from mass_spring_damper import MassSpringDamper
+from pid_controller import PIDController
+from gaussian_noise import GaussianNoise
 from logger import Logger
 
 BIGGEST_STEP = 1000000.0
