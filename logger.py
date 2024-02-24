@@ -3,6 +3,13 @@ import numpy as np
 from model import Model
 
 class Logger(Model):
+    """
+    This is a type of model that logs data from other models. It uses hdf5, and buffers
+    data to avoid writing to disk too often.
+
+    The important functions here are the constructor and the update() method, as with
+    most of the other models I've created.
+    """
     def __init__(self, world, buffer_size: int = 10000, dt: float = 0.1):
         super().__init__(world, dt=dt)
 

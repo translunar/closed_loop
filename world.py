@@ -12,7 +12,8 @@ BIGGEST_STEP = 1000000.0
 class World:
     """
     This is the registry of all models in the world. It is responsible for
-    making sure everything is synchronized.
+    making sure everything is synchronized and stepping all of the different 
+    processes.
     """
     def __init__(self, rng=npr.default_rng()):
         self.models = {}
@@ -121,7 +122,7 @@ if __name__ == "__main__":
     # Now define logging inputs
     high_rate_log.add_input('x', 'mass_spring_damper.x', 0)
     high_rate_log.add_input('xdot', 'mass_spring_damper.x', 1)
-    high_rate_log.add_input('force', 'mass_spring_damper.x', 2)
+    high_rate_log.add_input('force', 'mass_spring_damper.force')
     low_rate_log.add_input('E', 'pid.E')
     low_rate_log.add_input('e', 'pid.e')
     low_rate_log.add_input('de', 'pid.de')
