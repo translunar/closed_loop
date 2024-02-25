@@ -13,6 +13,7 @@ class MassSpringDamper(DynamicModel):
             self,
             world,
             x = np.zeros(2),
+            u = 0.0,
             m: float = 1.0,
             k: float = 1.0,
             b: float = 1.0,
@@ -22,36 +23,53 @@ class MassSpringDamper(DynamicModel):
         Args:
             world: the registry of models
             x: the initial state of the model
+            u: the initial control input
             m: the mass of the object
             k: the spring constant
             b: the damping constant
             dt: the time step for integration and updating
         """
-        super().__init__(world, dt=dt)
+        super().__init__(world, x, u, dt)
 
         # set the model parameters
         self.m = m
         self.k = k
         self.b = b
 
-        # initialize the state
-        self.x = x
+    def compute_inputs(self):
+        """
+        Pre-integration step of update().
+        """
+        # This comes from the PID controller (and the connection
+        # is defined in the world setup)
+        self.u = self.get_input('force')
 
     def dynamics(self, t, x):
         """
         The dynamics of the model. For some time t and state vector x, returns the
-        derivative of the state, xdot.
+        derivative of the state, xdot. We'll use state-space form for this model,
+        so this method returns the state derivative.
 
         Note that in this particular model, it's independent of t. We still
         need to include it in the signature because the solver expects it.
         """
-        xddot = (self.force - self.k * x[0] - self.b * x[1]) / self.m
-        return np.array([x[1], xddot])
-
-    def update(self, t):
-        self.force = self.get_input('force') # This comes from the PID controller (and the connection
-                                        # is defined in the world setup)
-
-        # Update any parts of the state with the inputs before we integrate.
-        # Don't update the time in a dynamic state (that happens when we integrate).
+        # Define dynamics matrix
+        A = np.array([[0.0, 1.0],
+                      [-self.k / self.m, -self.b / self.m]])
+        # Define control matrix
+        B = np.array([0.0, 1.0 / self.m])
+        u = self.u
         
+        return A.dot(x) + B.dot(u)
+    
+    def compute_outputs(self):
+        """
+        Post-integration step of update().
+
+        Ordinarily, this is where we define y = Cx + Du. In this case, our output is
+        just our state, so C = 1 and D = 0. We've actually defined it thusly in our base
+        class, but let's do it again here for clarity.
+        """
+        self.y = self.x
+    
+

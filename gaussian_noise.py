@@ -16,12 +16,13 @@ class GaussianNoise(DiscreteModel):
         # set the noise parameters
         self.sigma = sigma
 
-    def update(self, t):
-        process = self.get_input('process')
-
-        self.t = t # update the time
-
-        # add noise to the process
+    def compute_inputs(self):
+        self.y = self.get_input('process')
         self.mu = self.world.rng.normal(0.0, self.sigma)
-        self.u = process + self.mu
+
+    def compute_outputs(self):
+        # add noise to the process
+        self.u = self.y + self.mu
+
+
 

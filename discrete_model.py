@@ -17,8 +17,13 @@ class DiscreteModel(Model):
         # initialize the outputs
         self.u = 0.0
 
-    def update(self, t):
-        process = self.get_input('process')[0]
+    def compute_inputs(self):
+        self.y = self.get_input('process')
 
-        self.t = t # update the time
-        self.u = process + 1.0 # do a very basic calculation and update output
+    def compute_outputs(self):
+        self.u = self.y + 1.0 # do a very basic calculation and update output
+
+    def update(self, t):
+        self.compute_inputs()
+        self.t = t
+        self.compute_outputs()

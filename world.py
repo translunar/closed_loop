@@ -81,11 +81,7 @@ class World:
         for name in self.order:
             if self.models[name].ready_at(t):
                 print(f"updating model {name}")
-                if isinstance(self.models[name], DynamicModel):
-                    # Integrate also calls update
-                    self.models[name].integrate(t)
-                else:
-                    self.models[name].update(t)
+                self.models[name].update(t)
 
         # Update the world clock
         self.t = t
@@ -116,13 +112,13 @@ if __name__ == "__main__":
 
     # Define the connections between the model inputs and outputs
     msd.add_input('force', 'pid.u')
-    sensor.add_input('process', 'mass_spring_damper.x', 0)
+    sensor.add_input('process', 'mass_spring_damper.y', 0)
     pid.add_input('process', 'sensor.u')
 
     # Now define logging inputs
-    high_rate_log.add_input('x', 'mass_spring_damper.x', 0)
+    high_rate_log.add_input('y', 'mass_spring_damper.y', 0)
     high_rate_log.add_input('xdot', 'mass_spring_damper.x', 1)
-    high_rate_log.add_input('force', 'mass_spring_damper.force')
+    high_rate_log.add_input('force', 'mass_spring_damper.u')
     low_rate_log.add_input('E', 'pid.E')
     low_rate_log.add_input('e', 'pid.e')
     low_rate_log.add_input('de', 'pid.de')

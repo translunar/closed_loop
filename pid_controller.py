@@ -32,11 +32,9 @@ class PIDController(DiscreteModel):
         self.de = 0.0
         self.valid = False
 
-    def update(self, t):
-        process = self.get_input('process')
-
+    def compute_outputs(self):
         self.ep = self.e
-        self.e = self.setpoint - process # calculate the error
+        self.e = self.setpoint - self.y # calculate the error
         self.u = 0.0 # always zero until we're valid
 
         if self.valid: # This prevents weird stuff from happening with the derivative term.
@@ -53,5 +51,3 @@ class PIDController(DiscreteModel):
             # Once we've run this function once, we're valid.
             self.valid = True
 
-        # save for the next time step
-        self.t = t

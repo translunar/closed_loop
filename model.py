@@ -51,10 +51,14 @@ class Model:
             return value
         else:
             return value[index]
+        
+    def compute_inputs(self):
+        """
+        Setup all inputs for the model. When this method is finished, self.u should be
+        defined if it's a dynamic model. For a non-state space model,
+        """
+        raise NotImplementedError("expected model to have setup_inputs method defined")
 
-    def update(self, t):
-        """
-        This is where we do the computation to update the model's outputs from its inputs.
-        For the base class, we do nothing at all.
-        """
-        raise NotImplementedError("attempted to instantiate pure base class or expected model to have update() method defined")
+    def update(self):
+        """Update the model's state."""
+        raise NotImplementedError("expected model to have update method defined")
