@@ -32,10 +32,12 @@ class TestMassSpringDamper(unittest.TestCase):
         np.testing.assert_equal(first_x, self.msd.x) # x should not change, it's not an input
         self.assertEqual(self.msd.u, 5.0) # u should get set to input.y (which is 5)
 
+    @unittest.skip("needs dynamics tests")
     def test_dynamics(self):
         # ... TODO: finish this test
         pass
 
+    @unittest.skip("needs compute_outputs test")
     def test_compute_outputs(self):
         # ... TODO: finish this test
         pass
