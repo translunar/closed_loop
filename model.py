@@ -28,12 +28,6 @@ class Model:
         """Get the next time the model needs updating."""
         return self.t + self.dt
 
-    def ready_at(self, t):
-        """
-        Given the time-step-size of this model, is it time to update it again?
-        """
-        return t - self.t >= self.dt
-
     def add_input(self, input_name, model_id_attribute, index=None):
         """
         This method connects the output of another model to this model's input.
