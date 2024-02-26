@@ -9,9 +9,12 @@ rates, and the example includes two logging rate groups as well.
 
     source .venv/bin/activate
     pip install -r requirements.txt
-    python world.py && python plotter.py
+    python world.py 5.0 && python plotter.py
 
-The simulation is defined in world.py in `__main__`.
+Note that the mandatory argument for `world.py` is the desired position of
+the mass.
+
+The simulation is defined in `world.py` in `__main__`.
 
 To run unit tests,
 
