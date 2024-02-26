@@ -11,6 +11,8 @@ rates, and the example includes two logging rate groups as well.
     pip install -r requirements.txt
     python world.py && python plotter.py
 
+The simulation is defined in world.py in `__main__`.
+
 To run unit tests,
 
     pytest test/

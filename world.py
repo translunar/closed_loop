@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # Add the models to the world in the order they should be updated
     msd = MassSpringDamper(world, 'mass_spring_damper', m=1.0, k=1.0, b=1.0, dt=0.01)
     sensor = GaussianNoise(world, 'sensor', sigma=0.01, dt=0.1)
-    pid = PIDController(world, 'pid', dt=0.1)
+    pid = PIDController(world, 'pid', dt=0.1, kp=1.0, ki=0.8, kd=0.8)
 
     # Now add the loggers
     high_rate_log = Logger(world, 'high_rate_log', dt=0.01)
