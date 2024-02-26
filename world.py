@@ -1,7 +1,7 @@
 import h5py
 import numpy.random as npr
+import sys
 
-from dynamic_model import DynamicModel
 from mass_spring_damper import MassSpringDamper
 from pid_controller import PIDController
 from gaussian_noise import GaussianNoise
@@ -93,6 +93,11 @@ class World:
 if __name__ == "__main__":
     SEED = 0 # makes this run reproducible (which it will be anyway, if we
              # don't use the noise model)
+    
+    # Get the desired position of the mass from the command line
+    if len(sys.argv) != 2:
+        raise SyntaxError("Usage: python world.py <desired_x>")
+    desired_x = float(sys.argv[1])
 
     # Create a world (our "prime mover")
     world = World(rng=npr.default_rng(seed=SEED))
@@ -100,7 +105,7 @@ if __name__ == "__main__":
     # Add the models to the world in the order they should be updated
     msd = MassSpringDamper(world, 'mass_spring_damper', m=1.0, k=1.0, b=1.0, dt=0.01)
     sensor = GaussianNoise(world, 'sensor', sigma=0.01, dt=0.1)
-    pid = PIDController(world, 'pid', dt=0.1, kp=1.0, ki=0.8, kd=0.8)
+    pid = PIDController(world, 'pid', dt=0.1, kp=1.0, ki=0.8, kd=0.8, setpoint=desired_x)
 
     # Now add the loggers
     high_rate_log = Logger(world, 'high_rate_log', dt=0.01)

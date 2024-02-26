@@ -44,6 +44,7 @@ class PIDController(DiscreteModel):
         if self.valid: # This prevents weird stuff from happening with the derivative term.
             # calculate the integral (trapezoidal approximation)
             self.E += self.e * self.dt
+            # TODO: Consider adding anti-windup protection here.
 
             # calculate the derivative
             self.de = (self.e - self.ep) / self.dt
