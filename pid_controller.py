@@ -9,11 +9,11 @@ class PIDController(DiscreteModel):
             self, 
             world, 
             name: str,
+            dt: float = 0.1,
             kp: float = 1.0,
             ki: float = 1.0,
             kd: float = 1.0,
             setpoint: float = 1.0,
-            dt: float = 0.1,
     ):
         super().__init__(world, name, dt=dt)
         

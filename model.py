@@ -46,10 +46,10 @@ class Model:
         model_id, attribute = model_id_attribute.split('.')
 
         if model_id not in self.world.models:
-            raise ValueError(f"model {model_id} does not exist")
+            raise KeyError(f"model {model_id} does not exist")
 
         if input_name in self.inputs:
-            raise ValueError(f"input {input_name} already exists")
+            raise KeyError(f"input {input_name} already exists")
         self.inputs[input_name] = (model_id, attribute, index)
 
     def get_input(self, input_name):

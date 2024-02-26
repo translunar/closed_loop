@@ -32,7 +32,7 @@ class World:
         so dynamic models first generally).
         """
         if model.name in self.models:
-            raise ValueError(f"model {model.name} already exists")
+            raise KeyError(f"model {model.name} already exists")
 
         self.models[model.name] = model
         self.order.append(model.name)

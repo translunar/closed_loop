@@ -13,12 +13,12 @@ class MassSpringDamper(DynamicModel):
             self,
             world,
             name: str,
+            dt: float = 0.01,
             x = np.zeros(2),
             u = 0.0,
             m: float = 1.0,
             k: float = 1.0,
             b: float = 1.0,
-            dt: float = 0.01
     ):
         """
         Args:
@@ -45,7 +45,6 @@ class MassSpringDamper(DynamicModel):
         # This comes from the PID controller (and the connection
         # is defined in the world setup)
         self.u = self.get_input('force')
-        print(f"msd: compute_inputs set u to {self.u}")
 
     def dynamics(self, t, x):
         """

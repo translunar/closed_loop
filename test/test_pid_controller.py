@@ -18,10 +18,8 @@ class TestPIDController(unittest.TestCase):
         self.world = World("test")
         self.input = InputHarness(self.world, "input", dt=0.1)
         self.pid = PIDController(self.world, "pid", dt=0.1, setpoint=0.1)
-        self.output = DiscreteModel(self.world, "output", dt=0.1)
 
         self.pid.add_input('process', 'input.y')
-        self.output.add_input('process', 'pid.y')
 
         self.input.update(0.1) # make sure the input is ready before we start
 
