@@ -2,6 +2,8 @@ from typing import Dict
 import numpy as np
 from model import Model
 
+import re
+
 class Logger(Model):
     """
     This is a type of model that logs data from other models. It uses hdf5, and buffers
@@ -10,20 +12,39 @@ class Logger(Model):
     The important functions here are the constructor and the update() method, as with
     most of the other models I've created.
     """
-    def __init__(self, world, buffer_size: int = 10000, dt: float = 0.1):
-        super().__init__(world, dt=dt)
+    def __init__(self, world, name: str, buffer_size: int = 10000, dt: float = 0.1):
+        super().__init__(world, name, dt=dt)
 
         self.buffer_size = buffer_size
         self.buffer = {}
         self.index = 0  # Index in the current buffer
         self.total_logged = 0  # Total number of points logged
+        self.labels = {} # Maps input names to display names
+
+    def add_input(self, input_name, model_id_attribute, index=None, label=None):
+        """
+        This method adds an input to the logger, and works just like Model.add_input,
+        except that it also stores the display name in an hdf5 attribute.
+        """
+        # Check that input_name matches the hdf5 column name regex:
+        if not re.match(r'^[a-zA-Z0-9_\-]+$', input_name):
+            raise ValueError(f"input name {input_name} is not a valid hdf5 column name")
+        
+        super().add_input(input_name, model_id_attribute, index)
+
+        if label is not None:
+            self.labels[input_name] = label
+        
 
     def create_log(self, model_id):
         """
         Make some room in the file for logging data under this model.
         """
         self.group = self.world.f.create_group(model_id)
-        self.group.attrs['max_logged'] = 0  # Total points logged, for resizing
+        
+        # Store the display names in an attribute of the group
+        for input_name, display_name in self.labels.items():
+            self.group.attrs[input_name] = display_name
 
         # Initialize buffers for 't' and each input
         self.buffer['t'] = np.zeros(self.buffer_size, dtype='f')
@@ -37,7 +58,6 @@ class Logger(Model):
             dataset = self.group.require_dataset(name, shape=(new_size,), dtype='f', maxshape=(None,))
             dataset[self.total_logged:new_size] = buffer[:self.index]
 
-        self.group.attrs['max_logged'] = new_size  # Update total logged
         self.total_logged += self.index
         self.index = 0  # Reset buffer index
 

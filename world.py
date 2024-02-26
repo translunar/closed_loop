@@ -15,24 +15,27 @@ class World:
     making sure everything is synchronized and stepping all of the different 
     processes.
     """
-    def __init__(self, rng=npr.default_rng()):
+    def __init__(self, basename: str = "data", rng=npr.default_rng()):
         self.models = {}
         self.order = []
         self.t = 0.0
 
-        self.f = h5py.File('data.h5', 'w')
+        self.f = h5py.File(f'{basename}.h5', 'w')
         self.logging_ready = False
 
         # Only needed if we use the noise model:
         self.rng = rng
 
-    def add_model(self, name, model):
+    def add_model(self, model):
         """
         Add a model to the world (do this in order of model priority,
         so dynamic models first generally).
         """
-        self.models[name] = model
-        self.order.append(name)
+        if model.name in self.models:
+            raise ValueError(f"model {model.name} already exists")
+
+        self.models[model.name] = model
+        self.order.append(model.name)
 
     def setup_logging(self):
         """
@@ -94,37 +97,30 @@ if __name__ == "__main__":
     # Create a world (our "prime mover")
     world = World(rng=npr.default_rng(seed=SEED))
 
-    # Create models
-    msd = MassSpringDamper(world, m=1.0, k=1.0, b=1.0, dt=0.01)
-    sensor = GaussianNoise(world, sigma=0.01, dt=0.1)
-    pid = PIDController(world, dt=0.1)
-    high_rate_log = Logger(world, dt=0.01)
-    low_rate_log  = Logger(world, dt=0.1)
-
     # Add the models to the world in the order they should be updated
-    world.add_model('mass_spring_damper', msd)
-    world.add_model('sensor', sensor)
-    world.add_model('pid', pid)
-    
+    msd = MassSpringDamper(world, 'mass_spring_damper', m=1.0, k=1.0, b=1.0, dt=0.01)
+    sensor = GaussianNoise(world, 'sensor', sigma=0.01, dt=0.1)
+    pid = PIDController(world, 'pid', dt=0.1)
+
     # Now add the loggers
-    world.add_model('high_rate_log', high_rate_log)
-    world.add_model('low_rate_log', low_rate_log)
+    high_rate_log = Logger(world, 'high_rate_log', dt=0.01)
+    low_rate_log  = Logger(world, 'low_rate_log', dt=0.1)
 
     # Define the connections between the model inputs and outputs
-    msd.add_input('force', 'pid.u')
+    msd.add_input('force', 'pid.y')
     sensor.add_input('process', 'mass_spring_damper.y', 0)
-    pid.add_input('process', 'sensor.u')
+    pid.add_input('process', 'sensor.y')
 
     # Now define logging inputs
-    high_rate_log.add_input('y', 'mass_spring_damper.y', 0)
-    high_rate_log.add_input('xdot', 'mass_spring_damper.x', 1)
+    high_rate_log.add_input('position', 'mass_spring_damper.y', 0)
+    high_rate_log.add_input('velocity', 'mass_spring_damper.x', 1)
     high_rate_log.add_input('force', 'mass_spring_damper.u')
-    low_rate_log.add_input('E', 'pid.E')
-    low_rate_log.add_input('e', 'pid.e')
-    low_rate_log.add_input('de', 'pid.de')
-    low_rate_log.add_input('u', 'pid.u')
-    low_rate_log.add_input('mu', 'sensor.mu')
-    low_rate_log.add_input('x_noisy', 'sensor.u')
+    low_rate_log.add_input('E', 'pid.E', label="E(t)")
+    low_rate_log.add_input('e', 'pid.e', label="e(t)")
+    low_rate_log.add_input('de', 'pid.de', label="de(t)/dt")
+    low_rate_log.add_input('pid_y', 'pid.y', label="PID output")
+    low_rate_log.add_input('mu', 'sensor.mu', label="sensor noise")
+    low_rate_log.add_input('sensor_y', 'sensor.y', label="sensor output")
 
     # This should be the final call in the setup phase.
     world.setup_logging()

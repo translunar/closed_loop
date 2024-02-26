@@ -12,6 +12,7 @@ class MassSpringDamper(DynamicModel):
     def __init__(
             self,
             world,
+            name: str,
             x = np.zeros(2),
             u = 0.0,
             m: float = 1.0,
@@ -22,6 +23,7 @@ class MassSpringDamper(DynamicModel):
         """
         Args:
             world: the registry of models
+            name: the name of the model
             x: the initial state of the model
             u: the initial control input
             m: the mass of the object
@@ -29,7 +31,7 @@ class MassSpringDamper(DynamicModel):
             b: the damping constant
             dt: the time step for integration and updating
         """
-        super().__init__(world, x, u, dt)
+        super().__init__(world, name, x, u, dt)
 
         # set the model parameters
         self.m = m
@@ -43,6 +45,7 @@ class MassSpringDamper(DynamicModel):
         # This comes from the PID controller (and the connection
         # is defined in the world setup)
         self.u = self.get_input('force')
+        print(f"msd: compute_inputs set u to {self.u}")
 
     def dynamics(self, t, x):
         """
@@ -70,6 +73,7 @@ class MassSpringDamper(DynamicModel):
         just our state, so C = 1 and D = 0. We've actually defined it thusly in our base
         class, but let's do it again here for clarity.
         """
-        self.y = self.x
+        print(f"msd: compute_outputs set y to {self.x}")
+        self.y = np.array(self.x)
     
 

@@ -9,7 +9,7 @@ class DynamicModel(Model):
     representation, but it's not strictly necessary.
 
     For any model we derive from DynamicsModel, we define three methods:
-    
+
     * compute_inputs: setup control inputs for the model (e.g. self.u = self.get_input('force'))
     * dynamics: compute the derivative of the state vector, often in state-space form
     * compute_outputs: setup all outputs for the model (e.g. self.y = C.dot(self.x) + D.dot(self.u))
@@ -18,11 +18,12 @@ class DynamicModel(Model):
     def __init__(
             self,
             world,
+            name: str,
             x = np.zeros(1),
             u = np.zeros(1),
             dt: float = 0.1,
     ):
-        super().__init__(world, dt)
+        super().__init__(world, name, dt)
 
         # initialize the state
         self.x = x

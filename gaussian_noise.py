@@ -8,21 +8,22 @@ class GaussianNoise(DiscreteModel):
     def __init__(
             self, 
             world,
+            name: str,
             sigma: float = 1.0,
             dt: float = 0.1,
     ):
-        super().__init__(world, dt=dt)
+        super().__init__(world, name, dt=dt)
         
         # set the noise parameters
         self.sigma = sigma
 
     def compute_inputs(self):
-        self.y = self.get_input('process')
+        self.x = self.get_input('process')
         self.mu = self.world.rng.normal(0.0, self.sigma)
 
     def compute_outputs(self):
         # add noise to the process
-        self.u = self.y + self.mu
+        self.y = self.x + self.mu
 
 
 

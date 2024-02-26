@@ -8,20 +8,25 @@ class DiscreteModel(Model):
     """
 
     def __init__(
-            self, 
+            self,
             world, 
+            name: str,
             dt: float = 0.1
     ):
-        super().__init__(world, dt=dt)
+        super().__init__(world, name, dt=dt)
         
         # initialize the outputs
         self.u = 0.0
+        self.x = 0.0
+        self.y = 0.0
 
     def compute_inputs(self):
-        self.y = self.get_input('process')
+        print("called compute_inputs on DiscreteModel")
+        self.x = self.get_input('process')
+        self.u = 1.0
 
     def compute_outputs(self):
-        self.u = self.y + 1.0 # do a very basic calculation and update output
+        self.y = self.x + self.u # do a very basic calculation and update output
 
     def update(self, t):
         self.compute_inputs()

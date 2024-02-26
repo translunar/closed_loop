@@ -3,3 +3,4 @@ numpy
 mypy
 h5py
 matplotlib-stubs
+pytest

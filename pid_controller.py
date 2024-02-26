@@ -8,13 +8,14 @@ class PIDController(DiscreteModel):
     def __init__(
             self, 
             world, 
+            name: str,
             kp: float = 1.0,
             ki: float = 1.0,
             kd: float = 1.0,
             setpoint: float = 1.0,
             dt: float = 0.1,
     ):
-        super().__init__(world, dt=dt)
+        super().__init__(world, name, dt=dt)
         
         # set the controller parameters
         self.kp = kp
@@ -34,8 +35,8 @@ class PIDController(DiscreteModel):
 
     def compute_outputs(self):
         self.ep = self.e
-        self.e = self.setpoint - self.y # calculate the error
-        self.u = 0.0 # always zero until we're valid
+        self.e = self.setpoint - self.x # calculate the error
+        self.y = 0.0 # always zero until we're valid
 
         if self.valid: # This prevents weird stuff from happening with the derivative term.
             
@@ -46,7 +47,7 @@ class PIDController(DiscreteModel):
             self.de = (self.e - self.ep) / self.dt
 
             # calculate the control signal and save the temporary state            
-            self.u = self.kp * self.e + self.ki * self.E + self.kd * self.de
+            self.y = self.kp * self.e + self.ki * self.E + self.kd * self.de
         else:
             # Once we've run this function once, we're valid.
             self.valid = True

@@ -14,6 +14,14 @@ class Plotter:
         Plot a single logger.
         """
         # Get columns for group
+        if group not in self.f:
+            raise ValueError(f"no such group {group}")
+        
+        # Get the display names out of the group attributes
+        labels = {}
+        for key, value in self.f[group].attrs.items():
+            labels[key] = value
+        
         columns = list(self.f[group].keys())
         columns.remove('t')
 
@@ -29,7 +37,12 @@ class Plotter:
             if column == 't':
                 continue
             self.ax[i].plot(t, self.f[group][column][:])
-            self.ax[i].set_ylabel(column)
+
+            # Optionally set the label (if a label is given)
+            if column in labels:
+                self.ax[i].set_ylabel(labels[column])
+            else:
+                self.ax[i].set_ylabel(column)
 
         self.ax[-1].set_xlabel('t')
 
