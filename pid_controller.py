@@ -24,9 +24,7 @@ class PIDController(DiscreteModel):
         self.setpoint = setpoint
 
         # initialize the error, its integral, and its derivative.
-        # We don't have to save the derivative as a state variable, but it's useful
-        # when we inevitably want to debug our PID controller without restarting the
-        # whole simulation (particularly if we're doing an end-to-end mission).
+        # We save these so our logger can access them (for plotting)
         self.E = 0.0
         self.ep = 0.0 # previous error
         self.e = 0.0

@@ -84,6 +84,7 @@ class Logger(Model):
                 frame[column] = value[index]
 
         self.append_frame(t, frame)
+        self.t = t
 
     def finalize(self):
         """Call this method when logging is complete to dump any remaining data."""

@@ -66,28 +66,26 @@ class World:
         this picks the model with the earliest next update time and updates
         all models whose frequencies make them eligible at that time.
         """
-        # Go through each of the models and figure out the earliest possible
-        # dt to which an update is needed.
-        dt = BIGGEST_STEP
-        for name in self.order:
-            t_next = self.models[name].t_next
-            print(f"model {name} wants {t_next}")
-            model_delta = t_next - self.t
-            if model_delta > 0.0:
-                dt = min(dt, model_delta)
 
-        # Time of validity
-        t = self.t + dt
-        print(f"Proposed time {t}")
+        # Calculate the next update time for each model individually.
+        min_dt = float('inf')
+        for model in self.models.values():
+            if model.t_next < min_dt:
+                min_dt = min(min_dt, model.t_next - self.t)
 
-        # Perform updates and integrations
-        for name in self.order:
-            if self.models[name].ready_at(t):
-                print(f"updating model {name}")
-                self.models[name].update(t)
+        if min_dt == float('inf'):
+            raise ValueError("something is wrong with model time")
 
-        # Update the world clock
-        self.t = t
+        # Calculate the proposed update time.
+        proposed_t = self.t + min_dt
+
+        # Update models that are ready.
+        for name, model in self.models.items():
+            if proposed_t >= model.t_next:
+                model.update(proposed_t)
+
+        # Update the world clock to the proposed time.
+        self.t = proposed_t
 
 
 if __name__ == "__main__":
@@ -95,9 +93,12 @@ if __name__ == "__main__":
              # don't use the noise model)
     
     # Get the desired position of the mass from the command line
-    if len(sys.argv) != 2:
-        raise SyntaxError("Usage: python world.py <desired_x>")
-    desired_x = float(sys.argv[1])
+    if len(sys.argv) != 3:
+        raise SyntaxError("Usage: python world.py <duration> <desired_x>")
+    duration = float(sys.argv[1])
+    desired_x = float(sys.argv[2])
+    if duration <= 0.0:
+        raise ValueError("duration must be positive")
 
     # Create a world (our "prime mover")
     world = World(rng=npr.default_rng(seed=SEED))
@@ -131,7 +132,7 @@ if __name__ == "__main__":
     world.setup_logging()
 
     # Cycle the world
-    while world.t < 10.0:
+    while world.t < duration:
         world.cycle()
 
     world.finish_logging()

@@ -70,9 +70,8 @@ class MassSpringDamper(DynamicModel):
 
         Ordinarily, this is where we define y = Cx + Du. In this case, our output is
         just our state, so C = 1 and D = 0. We've actually defined it thusly in our base
-        class, but let's do it again here for clarity.
+        class, but let's go ahead and simplify the expression here.
         """
-        print(f"msd: compute_outputs set y to {self.x}")
         self.y = np.array(self.x)
     
 

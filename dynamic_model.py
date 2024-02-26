@@ -64,9 +64,6 @@ class DynamicModel(Model):
             [self.t, t],
             self.x,
         )
-        # Save previous state and time
-        self.tp = self.t
-        self.xp = np.array(self.x)
 
         # Save new state and time
         self.t = t

@@ -9,10 +9,11 @@ rates, and the example includes two logging rate groups as well.
 
     source .venv/bin/activate
     pip install -r requirements.txt
-    python world.py 5.0 && python plotter.py
+    python world.py 10.0 5.0 && python plotter.py
 
-Note that the mandatory argument for `world.py` is the desired position of
-the mass.
+Note that the mandatory arguments for `world.py` are:
+* the simulation duration (in units of time)
+* the desired position of the mass (PID controller setpoint)
 
 The simulation is defined in `world.py` in `__main__`.
 
