@@ -21,7 +21,6 @@ class DiscreteModel(Model):
         self.y = 0.0
 
     def compute_inputs(self):
-        print("called compute_inputs on DiscreteModel")
         self.x = self.get_input('process')
         self.u = 1.0
 

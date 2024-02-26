@@ -33,13 +33,15 @@ class PIDController(DiscreteModel):
         self.de = 0.0
         self.valid = False
 
+    def compute_inputs(self):
+        self.x = self.get_input('process')
+
     def compute_outputs(self):
         self.ep = self.e
         self.e = self.setpoint - self.x # calculate the error
         self.y = 0.0 # always zero until we're valid
 
         if self.valid: # This prevents weird stuff from happening with the derivative term.
-            
             # calculate the integral (trapezoidal approximation)
             self.E += self.e * self.dt
 
