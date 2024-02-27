@@ -104,9 +104,9 @@ if __name__ == "__main__":
     world = World(rng=npr.default_rng(seed=SEED))
 
     # Add the models to the world in the order they should be updated
-    msd = MassSpringDamper(world, 'mass_spring_damper', m=1.0, k=1.0, b=1.0, dt=0.01)
+    msd = MassSpringDamper(world, 'mass_spring_damper', m=4.0, k=2.0, b=3.0, dt=0.01)
     sensor = GaussianNoise(world, 'sensor', sigma=0.01, dt=0.1)
-    pid = PIDController(world, 'pid', dt=0.1, kp=1.0, ki=0.8, kd=0.8, setpoint=desired_x)
+    pid = PIDController(world, 'pid', dt=0.1, kp=40.0, ki=2.0, kd=4.0, setpoint=desired_x)
 
     # Now add the loggers
     high_rate_log = Logger(world, 'high_rate_log', dt=0.01)
@@ -127,6 +127,7 @@ if __name__ == "__main__":
     low_rate_log.add_input('pid_y', 'pid.y', label="PID output")
     low_rate_log.add_input('mu', 'sensor.mu', label="sensor noise")
     low_rate_log.add_input('sensor_y', 'sensor.y', label="sensor output")
+    low_rate_log.add_input('setpoint', 'pid.setpoint')
 
     # This should be the final call in the setup phase.
     world.setup_logging()
